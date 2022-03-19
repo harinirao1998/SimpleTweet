@@ -34,7 +34,7 @@ class TwitterClient(context: Context) : OAuthBaseClient(
     companion object {
         val REST_API_INSTANCE = TwitterApi.instance() // Change this
 
-        const val REST_URL = "https://api.twitter.com/1.1/"
+        const val REST_URL = "https://api.twitter.com/1.1"
 
         const val REST_CONSUMER_KEY =
             BuildConfig.CONSUMER_KEY // Change this inside apikey.properties
@@ -60,6 +60,16 @@ class TwitterClient(context: Context) : OAuthBaseClient(
         params.put("since_id", 1)
         client.get(apiUrl, params, handler)
     }
+
+
+    fun publishTweet(tweetContent:String, handler:JsonHttpResponseHandler){
+        val apiUrl = getApiUrl("statuses/update.json")
+        val params = RequestParams()
+        params.put("status",tweetContent)
+        client.post(apiUrl,params,"",handler)
+    }
+
+
 
     /* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json")
