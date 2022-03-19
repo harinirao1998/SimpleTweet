@@ -47,46 +47,33 @@ class ComposeActivity : AppCompatActivity() {
                 } else {
                     client.publishTweet(tweetContent, object : JsonHttpResponseHandler() {
                         override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-
-                            etCompose.addTextChangedListener(new TextWatcher(){
-                                override fun beforeTextChanged(
-                                    s: CharSequence?,
-                                    start: Int,
-                                    count: Int,
-                                    after: Int
-                                ) {
-
-                                }
-                                override fun afterTextChanged(s: Editable?) {
-                                    Log.e("hello","hello")
-                                }
+                            etCompose.addTextChangedListener(object:TextWatcher(){
                                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, after: Int){
                                     Log.e("hello","hello123")
-                                    val symbols = etCompose.length();
-                                    val dis=280-symbols
+
                                     textInput.text = "hee"
                                 }
 
+                                val tweet = Tweet.fromJson(json.jsonObject)
+                                //val symbols = etCompose.length();
+                                //val dis=280-symbols
+                                val intent = Intent()
+                                intent.putExtra("tweet", tweet)
+                                setResult(RESULT_OK, intent)
+
+                                finish()
                             })
+                            override fun onFailure(
+                                statusCode: Int,
+                                headers: Headers?,
+                                response: String?,
+                                throwable: Throwable?
+                            ) {
+                                Log.e(TAG, "Failed to publish tweet", throwable)
+                            }
 
-                            Log.i(TAG, "Successfully published tweet")
-                            val tweet = Tweet.fromJson(json.jsonObject)
 
-                            val intent = Intent()
-                            intent.putExtra("tweet", tweet)
-                            setResult(RESULT_OK, intent)
-
-                            finish()
-                        }
-
-                        override fun onFailure(
-                            statusCode: Int,
-                            headers: Headers?,
-                            response: String?,
-                            throwable: Throwable?
-                        ) {
-                            Log.e(TAG, "Failed to publish tweet", throwable)
-                        }
+                        })
 
                     })
                 }

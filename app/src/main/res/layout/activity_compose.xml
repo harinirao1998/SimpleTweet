@@ -44,7 +44,7 @@
             android:layout_width="310dp"
             android:layout_height="44dp"
             android:layout_weight="1"
-            android:text="remanining : 50" />
+            android:text="" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
