@@ -24,14 +24,36 @@ class ComposeActivity : AppCompatActivity() {
     lateinit var etCompose: EditText
     lateinit var btnTweet: Button
     lateinit var client: TwitterClient
-    lateinit var textInput: TextView
+    lateinit var tweetCount: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compose)
         etCompose = findViewById(R.id.editTextTweet) as EditText
         btnTweet = findViewById(R.id.btnTweet)
-        textInput = findViewById(R.id.remaining) as TextView
+        tweetCount = findViewById(R.id.remaining)
         client = TwitterApplication.getRestClient(this)
+
+//        tILayout = findViewById(R.id.tILayout)
+
+        etCompose.addTextChangedListener(object : TextWatcher{
+            val tweetContent = etCompose.text
+//            val tweetCounter = tweetContent.length
+//            val maxChar = 280
+//            val charLeft = maxChar
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                if (tweetContent.isNotEmpty() && tweetContent.length <= 280){
+//                    btnTweet.isEnabled = true
+//                } else { btnTweet.isEnabled = false}
+                btnTweet.isEnabled = tweetContent.isNotEmpty() && tweetContent.length <= 280
+                tweetCount.text = (280 - etCompose.text.toString().trim().length).toString()
+            }})
+
+
+
+
         btnTweet.setOnClickListener {
             val tweetContent = etCompose.text.toString()
 
@@ -47,13 +69,6 @@ class ComposeActivity : AppCompatActivity() {
                 } else {
                     client.publishTweet(tweetContent, object : JsonHttpResponseHandler() {
                         override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                            etCompose.addTextChangedListener(object:TextWatcher(){
-                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, after: Int){
-                                    Log.e("hello","hello123")
-
-                                    textInput.text = "hee"
-                                }
-
                                 val tweet = Tweet.fromJson(json.jsonObject)
                                 //val symbols = etCompose.length();
                                 //val dis=280-symbols
@@ -62,7 +77,7 @@ class ComposeActivity : AppCompatActivity() {
                                 setResult(RESULT_OK, intent)
 
                                 finish()
-                            })
+                            }
                             override fun onFailure(
                                 statusCode: Int,
                                 headers: Headers?,
@@ -71,21 +86,14 @@ class ComposeActivity : AppCompatActivity() {
                             ) {
                                 Log.e(TAG, "Failed to publish tweet", throwable)
                             }
-
-
                         })
 
-                    })
                 }
 
-
             }
-
-
         }
         companion object {
             val TAG = "ComposeActivity"
-
         }
     }
 
